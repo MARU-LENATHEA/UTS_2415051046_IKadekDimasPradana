@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/event_provider.dart';
 import '../widgets/error_state_view.dart';
+import 'edit_event_note_page.dart';
 
 class SavedEventsPage extends StatelessWidget {
   const SavedEventsPage({super.key});
@@ -54,14 +55,20 @@ class SavedEventsPage extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundColor: agenda.attendanceStatus == 'planned'
                         ? Colors.orange.shade100
-                        : Colors.green.shade100,
+                        : (agenda.attendanceStatus == 'attended'
+                              ? Colors.green.shade100
+                              : Colors.blue.shade100),
                     child: Icon(
                       agenda.attendanceStatus == 'planned'
                           ? Icons.calendar_today
-                          : Icons.check_circle,
+                          : (agenda.attendanceStatus == 'attended'
+                                ? Icons.check_circle
+                                : Icons.confirmation_num),
                       color: agenda.attendanceStatus == 'planned'
                           ? Colors.orange
-                          : Colors.green,
+                          : (agenda.attendanceStatus == 'attended'
+                                ? Colors.green
+                                : Colors.blue),
                     ),
                   ),
                   title: Text(
@@ -69,20 +76,56 @@ class SavedEventsPage extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    '${agenda.eventDate}\nRating Prioritas: ${agenda.priorityRating} ⭐',
-                  ),
-                  trailing: const Icon(
-                    Icons.edit_note,
-                    color: Colors.deepPurple,
+                    '${agenda.eventDate}\nCatatan: ${agenda.personalNote}\nRating: ${agenda.priorityRating} ⭐',
                   ),
                   isThreeLine: true,
-                  onTap: () {
-                    // Nanti diarahkan ke halaman Edit/Delete
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Fitur edit/hapus akan diaktifkan di tahap Update/Delete',
+
+                  // Tombol Hapus (Delete)
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    onPressed: () {
+                      // Tampilkan Dialog Konfirmasi (Syarat Wajib UTS)
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Hapus Agenda?'),
+                          content: Text(
+                            'Apakah Anda yakin ingin menghapus "${agenda.title}" dari daftar agenda?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('Batal'),
+                            ),
+                            FilledButton(
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                context.read<EventProvider>().removeAgendaItem(
+                                  agenda.id!,
+                                );
+                                Navigator.pop(ctx);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Agenda berhasil dihapus'),
+                                  ),
+                                );
+                              },
+                              child: const Text('Hapus'),
+                            ),
+                          ],
                         ),
+                      );
+                    },
+                  ),
+
+                  // Klik kartu untuk menuju form Edit (Update)
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditEventNotePage(savedEvent: agenda),
                       ),
                     );
                   },
