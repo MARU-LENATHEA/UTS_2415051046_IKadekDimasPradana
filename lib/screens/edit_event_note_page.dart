@@ -113,15 +113,16 @@ class _EditEventNotePageState extends State<EditEventNotePage> {
                 ),
                 maxLines: 3,
                 validator: (value) {
-                  if (value == null || value.trim().isEmpty)
+                  if (value == null || value.trim().isEmpty) {
                     return 'Catatan tidak boleh kosong';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 24),
 
               DropdownButtonFormField<String>(
-                value: _selectedStatus,
+                initialValue: _selectedStatus,
                 decoration: const InputDecoration(
                   labelText: 'Status Kehadiran',
                   border: OutlineInputBorder(),

@@ -19,31 +19,47 @@ class EventCatalogItem {
     required this.description,
   });
 
-  // Pemetaan JSON daripada respons SeatGeek REST API
-  factory EventCatalogItem.fromSeatGeekJson(Map<String, dynamic> json) {
-    final venue = json['venue'] as Map<String, dynamic>? ?? {};
-    final performers = json['performers'] as List<dynamic>? ?? [];
-    String image =
-        'https://picsum.photos/seed/${json['id'] ?? 'event'}/600/400';
+  // Pemetaan JSON dari respons SerpApi (Google Events Real-Time)
+  factory EventCatalogItem.fromSerpApiJson(Map<String, dynamic> json) {
+    final venueInfo = json['address'] as List<dynamic>? ?? [];
+    String city = 'Indonesia';
+    String venue = 'Venue TBA';
 
-    if (performers.isNotEmpty && performers.first['image'] != null) {
-      image = performers.first['image'] as String;
+    // Google Events biasanya memisahkan nama tempat dan kota dalam array 'address'
+    if (venueInfo.length >= 2) {
+      venue = venueInfo[0].toString();
+      city = venueInfo[1].toString();
+    } else if (venueInfo.isNotEmpty) {
+      venue = venueInfo[0].toString();
     }
 
+    final dateInfo = json['date'] as Map<String, dynamic>? ?? {};
+    final startDate = dateInfo['start_date'] as String? ?? 'TBA';
+    final when = json['when'] as String? ?? '';
+
+    // Kombinasi tanggal dan waktu yang lebih ramah dibaca
+    final formattedDate = when.isNotEmpty ? '$startDate ($when)' : startDate;
+
+    // Google Events memiliki thumbnail atau image. Jika kosong, gunakan dummy image.
+    final image =
+        json['thumbnail'] as String? ??
+        json['image'] as String? ??
+        'https://picsum.photos/seed/${json['title'].hashCode}/600/400';
+
     return EventCatalogItem(
-      id: json['id']?.toString() ?? '',
-      title:
-          json['title'] as String? ??
-          json['short_title'] as String? ??
-          'Unnamed Event',
-      type: (json['type'] as String? ?? 'concert').toUpperCase(),
-      datetimeLocal: json['datetime_local'] as String? ?? '2026-11-20T19:00:00',
-      venueName: venue['name'] as String? ?? 'Main Arena Stage',
-      venueCity: '${venue['city'] ?? 'Bali'}, ${venue['country'] ?? 'ID'}',
+      // Buat ID unik berdasarkan hashcode judul atau waktu saat ini
+      id:
+          json['title']?.hashCode.toString() ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      title: json['title'] as String? ?? 'Unnamed Event',
+      type: 'LIVE EVENT', // Bisa disesuaikan jika ingin mengambil tag spesifik
+      datetimeLocal: formattedDate.trim(),
+      venueName: venue,
+      venueCity: city,
       imageUrl: image,
       description:
           json['description'] as String? ??
-          'Pertunjukan langsung dan festival hiburan eksklusif di ${venue['name'] ?? 'venue utama'}. Tempah kehadiran dan urus nota peribadi anda melalui EventHub.',
+          'Pertunjukan langsung dari ${json['title'] ?? 'event ini'}. Temukan informasi lebih lanjut dan amankan tiket Anda.',
     );
   }
 }

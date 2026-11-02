@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -24,11 +25,11 @@ void main() {
                   'country': 'ID',
                 },
                 'performers': [
-                  {'image': 'https://picsum.photos/seed/integer/600/400'}
+                  {'image': 'https://picsum.photos/seed/integer/600/400'},
                 ],
-                'description': 'Festival tahunan mahasiswa TI.'
-              }
-            ]
+                'description': 'Festival tahunan mahasiswa TI.',
+              },
+            ],
           }),
           200,
         );
@@ -40,6 +41,40 @@ void main() {
       expect(events.first.title, 'INTEGER HIMATIF 2026');
       expect(events.first.venueName, 'Auditorium Undiksha');
       expect(events.first.venueCity, 'Singaraja, ID');
+    });
+
+    test('fetchEvents parses MockAPI array response', () async {
+      final mockClient = MockClient((request) async {
+        return http.Response(
+          json.encode([
+            {
+              'id': 'skena_01',
+              'title': 'Buleleng Skena Night #4',
+              'type': 'GIGS / INDIE POP',
+              'datetime_local': '2026-11-14T19:00:00',
+              'venue': {
+                'name': 'Singaraja Creative Hub',
+                'city': 'Buleleng',
+                'country': 'ID',
+              },
+              'images': [
+                {'url': 'https://picsum.photos/seed/bulelengskena/600/400'},
+              ],
+              'description': 'Intimate gigs kolektif lokal Buleleng.',
+            },
+          ]),
+          200,
+        );
+      });
+
+      final service = EventApiService(client: mockClient);
+      final events = await service.fetchEvents();
+      expect(events.length, 1);
+      expect(events.first.title, 'Buleleng Skena Night #4');
+      expect(
+        events.first.imageUrl,
+        'https://picsum.photos/seed/bulelengskena/600/400',
+      );
     });
 
     test('fetchEvents throws exception on API error', () async {
@@ -77,7 +112,7 @@ void main() {
     });
 
     test('EventCatalogItem parses SeatGeek JSON correctly', () {
-      final item = EventCatalogItem.fromSeatGeekJson({
+      final item = EventCatalogItem.fromSerpApiJson({
         'id': 12345,
         'title': 'Test Concert',
         'type': 'Concert',
@@ -88,8 +123,8 @@ void main() {
           'country': 'ID',
         },
         'performers': [
-          {'image': 'https://example.com/image.jpg'}
-        ]
+          {'image': 'https://example.com/image.jpg'},
+        ],
       });
 
       expect(item.id, '12345');

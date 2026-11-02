@@ -1,7 +1,6 @@
 class ApiConstants {
-  // Base URL SeatGeek Platform REST API v2
-  static const String seatGeekBaseUrl = 'https://api.seatgeek.com/2';
-
-  // Masukkan Client ID daripada https://seatgeek.com/build
-  static const String seatGeekClientId = 'NjMwMDYyODl8MTc5MzYyMDYwNS41ODQ0MTg4';
+  static const String serpApiBaseUrl = 'https://serpapi.com/search.json';
+  // Masukkan API Key dari SerpApi di bawah ini:
+  static const String serpApiKey =
+      'a6dc220384d614e5045bd406da4568e1f397e49b12a5343caa4cc8a81ae935cc';
 }

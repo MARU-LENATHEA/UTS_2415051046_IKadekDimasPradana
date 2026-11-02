@@ -13,7 +13,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Inisialisasi Supabase
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await Supabase.initialize(
+    url: supabaseUrl,
+    publishableKey: supabaseAnonKey,
+  );
 
   // Inisialisasi Arsitektur
   final apiService = EventApiService();

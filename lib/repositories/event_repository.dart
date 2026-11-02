@@ -4,34 +4,33 @@ import '../services/event_api_service.dart';
 import '../services/saved_event_data_source.dart';
 
 class EventRepository {
-  final EventApiService _apiService;
-  final SavedEventDataSource _dataSource;
+  final EventApiService apiService;
+  final SavedEventDataSource dataSource;
 
   EventRepository({
-    required EventApiService apiService,
-    required SavedEventDataSource dataSource,
-  }) : _apiService = apiService,
-       _dataSource = dataSource;
+    required this.apiService,
+    required this.dataSource,
+  });
 
   // Operasi Katalog REST API (GET)
   Future<List<EventCatalogItem>> getCatalogEvents({String query = ''}) {
-    return _apiService.fetchEvents(query: query);
+    return apiService.fetchEvents(query: query);
   }
 
   // Operasi CRUD Database Supabase
   Future<List<SavedEvent>> getSavedEvents() {
-    return _dataSource.getSavedEvents();
+    return dataSource.getSavedEvents();
   }
 
   Future<SavedEvent> addSavedEvent(SavedEvent event) {
-    return _dataSource.createSavedEvent(event);
+    return dataSource.createSavedEvent(event);
   }
 
   Future<void> updateSavedEvent(int id, SavedEvent event) {
-    return _dataSource.updateSavedEvent(id, event);
+    return dataSource.updateSavedEvent(id, event);
   }
 
   Future<void> deleteSavedEvent(int id) {
-    return _dataSource.deleteSavedEvent(id);
+    return dataSource.deleteSavedEvent(id);
   }
 }

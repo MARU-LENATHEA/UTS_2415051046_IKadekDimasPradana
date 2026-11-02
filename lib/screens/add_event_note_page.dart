@@ -129,7 +129,7 @@ class _AddEventNotePageState extends State<AddEventNotePage> {
 
               // Dropdown Status Kehadiran
               DropdownButtonFormField<String>(
-                value: _selectedStatus,
+                initialValue: _selectedStatus,
                 decoration: const InputDecoration(
                   labelText: 'Status Kehadiran',
                   border: OutlineInputBorder(),
