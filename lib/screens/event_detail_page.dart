@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../models/event_catalog_item.dart';
+import 'add_event_note_page.dart';
 
 class EventDetailPage extends StatelessWidget {
-  final EventCatalogItem event; // Menerima data dari halaman sebelumnya
+  final EventCatalogItem event;
 
   const EventDetailPage({super.key, required this.event});
 
@@ -15,6 +16,7 @@ class EventDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Gambar Poster Event
             Image.network(
               event.imageUrl,
               width: double.infinity,
@@ -35,6 +37,7 @@ class EventDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Badge Kategori
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -53,12 +56,16 @@ class EventDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
+
+                  // Judul Event
                   Text(
                     event.title,
                     style: Theme.of(context).textTheme.headlineSmall
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
+
+                  // Tanggal Event
                   Row(
                     children: [
                       const Icon(
@@ -74,6 +81,8 @@ class EventDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
+
+                  // Lokasi / Venue
                   Row(
                     children: [
                       const Icon(
@@ -90,7 +99,10 @@ class EventDetailPage extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const Divider(height: 32),
+
+                  // Deskripsi
                   const Text(
                     'Deskripsi Acara',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -106,15 +118,14 @@ class EventDetailPage extends StatelessWidget {
           ],
         ),
       ),
+
+      // Tombol Simpan Agenda
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Nanti dihubungkan ke form INSERT Database Supabase
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Fitur simpan agenda segera hadir di tahap berikutnya!',
-              ),
-            ),
+          // Navigasi ke halaman form tambah agenda beserta data event-nya
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => AddEventNotePage(event: event)),
           );
         },
         icon: const Icon(Icons.bookmark_add),
