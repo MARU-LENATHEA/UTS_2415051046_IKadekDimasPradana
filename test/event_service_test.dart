@@ -112,7 +112,7 @@ void main() {
     });
 
     test('EventCatalogItem parses SeatGeek JSON correctly', () {
-      final item = EventCatalogItem.fromSerpApiJson({
+      final item = EventCatalogItem.fromJson({
         'id': 12345,
         'title': 'Test Concert',
         'type': 'Concert',

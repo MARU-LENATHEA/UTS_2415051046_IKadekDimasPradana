@@ -1,6 +1,4 @@
 class ApiConstants {
-  static const String serpApiBaseUrl = 'https://serpapi.com/search.json';
-  // Masukkan API Key dari SerpApi di bawah ini:
-  static const String serpApiKey =
-      'a6dc220384d614e5045bd406da4568e1f397e49b12a5343caa4cc8a81ae935cc';
+  static const String mockApiBaseUrl =
+      'https://6ae8af1f1a7b15aaa50f609f.mockapi.io/api/v1';
 }

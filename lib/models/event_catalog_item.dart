@@ -19,47 +19,23 @@ class EventCatalogItem {
     required this.description,
   });
 
-  // Pemetaan JSON dari respons SerpApi (Google Events Real-Time)
-  factory EventCatalogItem.fromSerpApiJson(Map<String, dynamic> json) {
-    final venueInfo = json['address'] as List<dynamic>? ?? [];
-    String city = 'Indonesia';
-    String venue = 'Venue TBA';
-
-    // Google Events biasanya memisahkan nama tempat dan kota dalam array 'address'
-    if (venueInfo.length >= 2) {
-      venue = venueInfo[0].toString();
-      city = venueInfo[1].toString();
-    } else if (venueInfo.isNotEmpty) {
-      venue = venueInfo[0].toString();
-    }
-
-    final dateInfo = json['date'] as Map<String, dynamic>? ?? {};
-    final startDate = dateInfo['start_date'] as String? ?? 'TBA';
-    final when = json['when'] as String? ?? '';
-
-    // Kombinasi tanggal dan waktu yang lebih ramah dibaca
-    final formattedDate = when.isNotEmpty ? '$startDate ($when)' : startDate;
-
-    // Google Events memiliki thumbnail atau image. Jika kosong, gunakan dummy image.
-    final image =
-        json['thumbnail'] as String? ??
-        json['image'] as String? ??
-        'https://picsum.photos/seed/${json['title'].hashCode}/600/400';
+  factory EventCatalogItem.fromJson(Map<String, dynamic> json) {
+    final venue = json['venue'] as Map<String, dynamic>? ?? {};
+    final images = json['images'] as List<dynamic>? ?? [];
+    final imageUrl = images.isNotEmpty
+        ? images[0]['url'] as String
+        : 'https://picsum.photos/600/400';
 
     return EventCatalogItem(
-      // Buat ID unik berdasarkan hashcode judul atau waktu saat ini
-      id:
-          json['title']?.hashCode.toString() ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
-      title: json['title'] as String? ?? 'Unnamed Event',
-      type: 'LIVE EVENT', // Bisa disesuaikan jika ingin mengambil tag spesifik
-      datetimeLocal: formattedDate.trim(),
-      venueName: venue,
-      venueCity: city,
-      imageUrl: image,
+      id: json['id']?.toString() ?? '',
+      title: json['title'] as String? ?? 'Judul Event',
+      type: json['type'] as String? ?? 'EVENT',
+      datetimeLocal: json['datetime_local'] as String? ?? 'TBA',
+      venueName: venue['name'] as String? ?? 'Venue',
+      venueCity: venue['city'] as String? ?? 'Kota',
+      imageUrl: imageUrl,
       description:
-          json['description'] as String? ??
-          'Pertunjukan langsung dari ${json['title'] ?? 'event ini'}. Temukan informasi lebih lanjut dan amankan tiket Anda.',
+          json['description'] as String? ?? 'Deskripsi tidak tersedia.',
     );
   }
 }
